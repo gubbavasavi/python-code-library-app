@@ -1,1 +1,98 @@
 
+services:
+  db:
+    image: vasavigubba/myrepo:pythondbimage
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_password
+    volumes:
+      - mydata:/var/lib/mysql
+    networks:
+      - mynetwork
+    secrets:
+      - mysql_password
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 400M
+        limits:
+          cpus: '0.5'
+          memory: 800M
+
+  auth_service:
+    image: vasavigubba/myrepo:python_auth_service_image
+    ports:
+      - "5001:5001"
+    networks:
+      - mynetwork
+    deploy:
+      replicas: 2
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 400M
+        limits:
+          cpus: '0.5'
+          memory: 800M
+
+  book_service:
+    image: vasavigubba/myrepo:python_book_service_image
+    ports:
+      - "5002:5002"
+    networks:
+      - mynetwork
+    deploy:
+      replicas: 2
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 400M
+        limits:
+          cpus: '0.5'
+          memory: 800M
+
+  borrow_service:
+    image: vasavigubba/myrepo:python_borrow_service_image
+    ports:
+      - "5003:5003"
+    networks:
+      - mynetwork
+    deploy:
+      replicas: 2
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 400M
+        limits:
+          cpus: '0.5'
+          memory: 800M
+
+  frontend:
+    image: vasavigubba/myrepo:python_frontend_image
+    ports:
+      - "5000:5000"
+    networks:
+      - mynetwork
+    deploy:
+      replicas: 3
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 400M
+        limits:
+          cpus: '0.5'
+          memory: 800M
+
+secrets:
+  mysql_password:
+    external: true
+
+volumes:
+  mydata:
+
+networks:
+  mynetwork:
+    driver: overlay
